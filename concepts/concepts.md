@@ -108,7 +108,7 @@ export function Main(value: any) {
 
 It's clear from this example that we use arrow function to denote case we want to match, this is possible because the context is clear, since we declare the DSL we want to use at the beginning of a local context: "use match".
 
-In this way, the reset of statements is customizable, and you can reinterpret the semantics of them by implementing a DSL. 
+In this way, the rest of statements is customizable, and you can reinterpret the semantics of them by implementing a DSL. 
 
 TypeDraft uses babel under the hood to transform code, and the way we implement a DSL is almost the same way we implement a plugin in babel. For babel plugin, see [babel plugin handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#toc-get-the-path-of-a-sub-node). 
 
