@@ -2,90 +2,114 @@
 
 ## Local Context
 
-The function declaration ```Nested``` and ```Bar```are called local context. You can change the order of them because it's just plain function declaration, thus you can put important context first and let the code follows your design.
+Local context is function that used as standalone JSX Element. You can change the order of them because they are just plain function declarations, thus you can put important context first and let the code follows your design.
 
 The params in local context function declaration are not "real" params, they are identifiers used in this context, we write them just for compiler and avoid "undefined ... found". In this way, you still get the full power of typescript.
 
-## DSL
-You can also use DSL in local context, for example, update ```Nested```:
+```typescript
+<VirtualMachine /> +
+    function Load(this: VirtualMachine & IVirtualMachine, image: Image) {
+        const reduced = image.reduce((commands: Array<ICommand>, current: ICommand) => {
+            <HandleLabelRelated />;
+            commands.push(current);
+            return commands;
+        }, []);
+        this.m_CommandList.push(...reduced);
+    };
+```
 
-```diff typescript
-function Nested()
-{
-    console.log("nested");
+For example, in the implementation of [jack vm](https://github.com/mistlog/jack-vm/blob/master/source-view/core/vm.md#load), we extract the logic of ```HandleLabelRelated``` to a local context, thus the logic in the ```Load``` method of ```VirtualMachine``` is straightforward.
 
-+   let value: string | number;
-+   //@ts-ignore
-+   <TestDSL/>;
+```typescript
+function HandleLabelRelated(this: VirtualMachine & IVirtualMachine, current: ICommand, commands: Array<ICommand>) {
+    const index = commands.length;
+    if (current instanceof Label) {
+        current.Register(this, index);
+        return commands;
+    } else if (current instanceof DeclareFunction) {
+        current.RegisterLabel(this, index);
+    }
 }
 ```
 
-and add ```TestDSL```:
+To leverage type check of typescript, we add missing variables to the argument list and they will be removed after transcription.
+
+## Transcribe
+
+Transcription is the process that transforms code with local context to plain typescript. The word "transcribe" is coined to differentiate it from words such as "compile" or "transpile".
+
+Language we use today all are used to write code that runs. Instead of designed to be executed, code in typedraft is designed to be manipulated. 
+
+The order of code is not the order of execution, for example, it doesn't make sense to "add" a function to a JSX element or to declare a function that used as standalone JSX element. The order of code follows our thought, write important one first and keep trivial one as appendix.
+
+That's why this language is called "draft" as opposed to "script". It encourages us to write code for human to read and reason about, in the same way we write articles. For more details of this style of programming, please refer to [literate programming](https://en.wikipedia.org/wiki/Literate_programming).
+
+## DSL
+
+To be more expressive, the mode [babel](https://babeljs.io/) takes is baked into typedraft. We can extend this language with customized DSL. 
+
+Take [draft-dsl-match](https://github.com/mistlog/draft-dsl-match) as an example, and you can see it in action in [typedraft playground](https://mistlog.github.io/typedraft-playground/):
 
 ```typescript
-function TestDSL(value: number | string) {
+enum Type {
+    Type1,
+    Type2
+}
+
+export function Main(value: any) {
+    <Match />;
+}
+
+function Match(value: any) {
     "use match";
+
     (value: "a") => {
-        console.log("do something")
-    }
+        console.log("value is a");
+    };
 
     (value: 1) => {
-        console.log("value is 1...")
-    }
+        <HandleValueIsNumber />;
+    };
+
+    (value: Type.Type1) => {
+        console.log("value is type1");
+    };
 
     () => {
-        console.log("this is default")
-    }
+        console.log("default here");
+    };
 }
+
+function HandleValueIsNumber() {
+    console.log("value is 1");
+}
+
 ```
 
-rerun, and you will get:
+The result will be:
 
-```diff
-export class Foo {
-  static foo: number;
-
-  Test(a: number, b: string) {
-    a += Foo.foo;
-    console.log("nested");
-+    let value: string | number;
-
-+    if (value === "a") {
-+      console.log("do something");
-+    } else if (value === 1) {
-+      console.log("value is 1...");
-+    } else {
-+      console.log("this is default");
-+    }
-
-    console.log("bar");
-    return a.toString() + b;
+```typescript
+enum Type {
+  Type1,
+  Type2,
+}
+export function Main(value: any) {
+  if (value === "a") {
+    console.log("value is a");
+  } else if (value === 1) {
+    console.log("value is 1");
+  } else if (value === Type.Type1) {
+    console.log("value is type1");
+  } else {
+    console.log("default here");
   }
-
 }
 ```
 
-The "match" DSL is provided with typedraft, and you can create your own DSLs: https://repl.it/@mistlog/typedraft-simple-dsl. Or you can inspect the implementation of [match](https://github.com/mistlog/typedraft/blob/master/source-view/dsl/draft-dsl-match.md). [unit test cases](https://github.com/mistlog/typedraft/blob/master/test/dsl/dsl.test.ts) are also good document.
+It's clear from this example that we use arrow function to denote case we want to match, this is possible because the context is clear, since we declare the DSL we want to use at the beginning of a local context: "use match".
 
-The interface of DSL is:
+In this way, the reset of statements is customizable, and you can reinterpret the semantics of them by implementing a DSL. 
 
-```typescript
-export interface IDSL {
-    Transcribe(block: Array<Statement>): Array<Statement>;
-}
-```
+TypeDraft uses babel under the hood to transform code, and the way we implement a DSL is almost the same way we implement a plugin in babel. For babel plugin, see [babel plugin handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#toc-get-the-path-of-a-sub-node). 
 
-Thus a DSL is just a "statements to statements" translator. TypeDraft uses babel to transform your code, thus "write a DSL" === "write a babel plugin", but it can be applied in any part of your code. You can treat this feature as "local babel".
-
-## Literate Programming
-If we want to write code following our design, we should change the order of code. As we have local context, we can rearrange the code in function. However, we also write class code, thus we need a counterpart in the world of class, and the following syntax is proposed:
-
-```typescript
-<Foo/> + function Test(this: Foo, a: number, b: string){
-    //@ts-ignore
-    <Bar/>;
-    return a.toString()+b;
-};
-```
-
-In essence, we use ```JSX tag + fuction``` to express the intention that we want to "add" a method to class.
+For implementing DSL, see repo [draft-dsl-match](https://github.com/mistlog/draft-dsl-match), and examples in [unit test](https://github.com/mistlog/typedraft/blob/0.1.9/test/plug-in/plugin.test.ts#L178).
