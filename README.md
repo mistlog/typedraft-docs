@@ -6,5 +6,5 @@ TypeDraft is a superset of typescript with built-in support for DSL extension an
 ## Documentation
 
 * [TypeDraft in 5 minutes](./quick-start/typedraft-in-5-minutes.md)
-* [Concepts](./concept/concepts.md)
+* [Concepts](./concepts/concepts.md)
 * [Examples](./examples/examples.md)
