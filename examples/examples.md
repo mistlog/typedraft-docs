@@ -1,6 +1,6 @@
 ## [TypeDraft](https://github.com/mistlog/typedraft/tree/master/source-view)
 
-Typedraft is self-hosting, instead of reading code, you may want to read document generated from code(use tool [source-view](https://github.com/mistlog/source-view)) because it's [in the order demanded by the logic and flow of our thoughts](https://en.wikipedia.org/wiki/Literate_programming). You can find them in [source-view](https://github.com/mistlog/typedraft/tree/master/source-view). Some examples are:
+TypeDraft is self-hosting, instead of reading code, you may want to read document generated from code(use tool [source-view](https://github.com/mistlog/source-view)) because it's [in the order demanded by the logic and flow of our thoughts](https://en.wikipedia.org/wiki/Literate_programming). You can find them in [source-view](https://github.com/mistlog/typedraft/tree/master/source-view). Some examples are:
 
 * [module](https://github.com/mistlog/typedraft/blob/master/source-view/code-object/module.md)
 * [local context](https://github.com/mistlog/typedraft/blob/master/source-view/code-object/local-context.md)
@@ -8,6 +8,10 @@ Typedraft is self-hosting, instead of reading code, you may want to read documen
 * [class](https://github.com/mistlog/typedraft/blob/master/source-view/code-object/export-class.md)
 * [transcriber](https://github.com/mistlog/typedraft/blob/master/source-view/core/transcriber.md)
 * [plugin-local-context](https://github.com/mistlog/typedraft/blob/master/source-view/plug-in/draft-plugin-local-context.md)
+
+## [SvelteDraft](https://github.com/mistlog/svelte-draft)
+
+SvelteDraft adds complete typescript support to [svelte](https://svelte.dev/), see https://github.com/mistlog/svelte-draft.
 
 ## [Algorithm](https://github.com/mistlog/algorithm/tree/master/source-view)
 
