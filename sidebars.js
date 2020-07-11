@@ -1,5 +1,6 @@
 module.exports = {
-  someSidebar: {
-    TypeDraft: ['typedraft-in-5min', 'concepts']
+  docs: {
+    TypeDraft: ['typedraft-in-5min'],
+    Handbook: ['jsx-as-macro'],
   },
 };

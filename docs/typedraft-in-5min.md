@@ -6,19 +6,21 @@ sidebar_label: TypeDraft in 5 minutes
 
 Welcome to the TypeDraft docs!
 
-TypeDraft is a superset of typescript with built-in support for DSL extension and literate programming. TypeDraft transcribes to readable TypeScript, and you can try it out at the [playground](https://mistlog.github.io/typedraft-playground/).
+TypeDraft is a superset of typescript with built-in support for DSL extension and literate programming.
+
+TypeDraft transcribes to readable TypeScript, and you can try it out at the [playground](https://mistlog.github.io/typedraft-playground/).
 
 ## Installing TypeDraft
 
 You can install it globally:
 ```shell
-npm i -g typedraft
+> npm i -g typedraft
 ```
 
 ## Build your first TypeDraft file
-In your editor, type the following typescript code in demo.tsx:
+In your editor, type the following typescript code in `demo.tsx`:
 
-```typescript
+```typescript title="demo.tsx"
 export function Main() {
   console.log("hello from main");
   <ContextA/>;
@@ -29,13 +31,9 @@ function ContextA() {
 }
 ```
 
-As typedraft is a superset of typescript, you still write typescript here, but in a slightly different way.
+As typedraft is a superset of typescript, you still write typescript here, but in a slightly different way. The function declaration ```ContextA``` here is not used to declare a function, instead, it will be used as JSX element and get expanded after code transformation.
 
-The function declaration ```ContextA``` here is not used to declare a function, instead, it's used to denote a ```local context```.
-
-Local context is used as standalone JSX element. All statements in a local context will be processed and put in the place of JSX element. This step of transform is called transcription.
-
-## Transcribe
+### Transcribe
 
 At the command line, run the CLI tool(td: typedraft):
 
@@ -45,73 +43,52 @@ At the command line, run the CLI tool(td: typedraft):
 
 The result will be a file ```demo.ts``` which contains valid and readable typescript code:
 
-```typescript
+```ts title="demo.ts"
 export function Main() {
   console.log("hello from main");
   console.log("hello from context A");
 }
 ```
 
-In the example of [polynomial addtion algorithm](https://github.com/mistlog/algorithm/blob/master/source-view/linear-list/polynomial-addition.md), we use local context to sketch the skeleton of algorithm and keep the logic clear and concise.
+You can treat this feature as some kind of macro, the difference is that we don't manipulate string, instead, we transform AST.
 
-```typescript
-<Polynomial /> +
-    function Add(this: Polynomial, another: Polynomial) {
-        const P = this.m_Items;
-        const Q = [...another.m_Items];
-        let p = 0;
-        let q = 0;
-        for (;;) {
-            if (P[p].m_Exponential < Q[q].m_Exponential) {
-                <MoveToNextItemOfQ />;
-            } else if (P[p].m_Exponential === Q[q].m_Exponential) {
-                <CheckIfFinishedAndReturn />;
-                <AddCoefficients />;
-            } else if (P[p].m_Exponential > Q[q].m_Exponential) {
-                <InsertNewItem />;
-            }
-        }
-    };
-```
+### Method Addition
 
-The syntax ```JSX + function declaration``` is used to denote ```method addition```.
-
-## Method Addition
-
-To support literate programming, we need to figure out a way to reorder code. Method addition is a convention to reorder method of class.
+To support literate programming, we need to figure out a way to reorder code. Method addition is the way to reorder method of class.
 
 In your editor, type the following typescript code:
 
-```typescript
+```ts title="demo.tsx"
 export class ClassTest { }
 
-/*
-put important method first
-*/
+
+/**
+ * put important method first
+ */  
 <ClassTest /> +
     function ImportMethodA()
     {
         console.log("in important method");
     };
 
-/*
-trivial
-*/
+
+/**
+ * trivial
+ */  
 <ClassTest /> +
     function constructor()
     {
         <TrivialInitialization />;
     };
 
-function TrivialInitialization()
-{
+function TrivialInitialization() {
     console.log("in trivial init");
 }
 ```
 
 transcribe it and get:
 
-```typescript
+```ts title="demo.ts"
 export class ClassTest {
   ImportMethodA() {
     console.log("in important method");
@@ -124,4 +101,46 @@ export class ClassTest {
 }
 ```
 
-That's the basic of typedraft, for more details, see [concepts](../concepts/concepts.md).
+### DSL
+
+Take [draft-dsl-match](https://github.com/mistlog/draft-dsl-match/tree/develop) as an example, we can get limited pattern match support from it.
+
+```shell
+> git clone https://github.com/mistlog/dsl-match-demo.git
+> cd dsl-match-demo
+> npm install
+```
+
+In this demo project, we have code in `demo.tsx`:
+
+```ts title="demo.tsx"
+export function Main(value: any) {
+    {
+        "use match";
+
+        (value: 1) => <HandleValueIsNumber />;
+        (value: "a" | "b" | "c") => console.log("value is ...");
+        () => console.log("default here");
+    }
+}
+
+function HandleValueIsNumber() {
+    console.log("value is 1");
+}
+```
+
+transcribe it and get:
+
+```ts title="demo.ts"
+export function Main(value: any) {
+  if (value === 1) {
+    console.log("value is 1");
+  } else if (value === "a" || value === "b" || value === "c") {
+    console.log("value is ...");
+  } else {
+    console.log("default here");
+  }
+}
+```
+
+That's the basics of typedraft, for more examples of what’s possible in TypeDraft, see the Handbook section of the website.
