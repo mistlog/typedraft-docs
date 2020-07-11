@@ -109,11 +109,12 @@ Take [draft-dsl-match](https://github.com/mistlog/draft-dsl-match/tree/develop) 
 > git clone https://github.com/mistlog/dsl-match-demo.git
 > cd dsl-match-demo
 > npm install
+> npm run build
 ```
 
-In this demo project, we have code in `demo.tsx`:
+In this demo project, we have code in `src/demo.tsx`:
 
-```ts title="demo.tsx"
+```ts title="src/demo.tsx"
 export function Main(value: any) {
     {
         "use match";
@@ -131,7 +132,7 @@ function HandleValueIsNumber() {
 
 transcribe it and get:
 
-```ts title="demo.ts"
+```ts title="src/demo.ts"
 export function Main(value: any) {
   if (value === 1) {
     console.log("value is 1");
