@@ -3,7 +3,7 @@ name: docs
 on:
   push:
     branches:
-    - feature/use-docusaurus
+    - master
 
 jobs:
   build:
