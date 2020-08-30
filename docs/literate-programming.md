@@ -8,7 +8,7 @@ If TypeScript is JavaScript that scales, then TypeDraft is TypeScript that scale
 
 TypeDraft focuses on maintenance of code at the first place, it encourages developer to write comprehensible code. The paradigm it takes is [Literate Programming](https://en.wikipedia.org/wiki/Literate_programming).
 
-## Design/Document First
+## Design / Document First
 
 In typedraft, we still write code, however, code comes after design. 
 
@@ -29,4 +29,4 @@ To demonstrate the concept of "lerp" in [Rays, a Simple Camera, and Background](
 
 ## Reuse Best Practice
 
-Beyond that, with macro, typedraft can be used in large scale code generation, just like article generation as long as you can extract those boilerplate code to DSL.
+Beyond that, with macro, typedraft can be used in large scale code generation, just like article generation as long as you can distill the boilerplate code to DSL.

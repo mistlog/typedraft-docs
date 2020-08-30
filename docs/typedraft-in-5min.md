@@ -13,17 +13,19 @@ TypeDraft transcribes to readable TypeScript, and you can try it out at the [pla
 ## Installing TypeDraft
 
 You can install it globally:
+
 ```shell
 > npm i -g typedraft
 ```
 
 ## Build your first TypeDraft file
+
 In your editor, type the following typescript code in `demo.tsx`:
 
 ```typescript title="demo.tsx"
 export function Main() {
   console.log("hello from main");
-  <ContextA/>;
+  <ContextA />;
 }
 
 function ContextA() {
@@ -31,7 +33,7 @@ function ContextA() {
 }
 ```
 
-As typedraft is a superset of typescript, you still write typescript here, but in a slightly different way. The function declaration ```ContextA``` here is not used to declare a function, instead, it will be used as JSX element and get expanded after code transformation.
+As typedraft is a superset of typescript, you still write typescript here, but in a slightly different way. The function declaration `ContextA` here is not used to declare a function, instead, it will be used as JSX element and get expanded after code transformation.
 
 ### Transcribe
 
@@ -41,7 +43,7 @@ At the command line, run the CLI tool(td: typedraft):
 > td ./demo.tsx
 ```
 
-The result will be a file ```demo.ts``` which contains valid and readable typescript code:
+The result will be a file `demo.ts` which contains valid and readable typescript code:
 
 ```ts title="demo.ts"
 export function Main() {
@@ -59,30 +61,28 @@ To support literate programming, we need to figure out a way to reorder code. Me
 In your editor, type the following typescript code:
 
 ```ts title="demo.tsx"
-export class ClassTest { }
+export class ClassTest {}
 
 
 /**
  * put important method first
- */  
+ */
 <ClassTest /> +
-    function ImportMethodA()
-    {
-        console.log("in important method");
-    };
+  function ImportMethodA() {
+    console.log("in important method");
+  };
 
 
 /**
  * trivial
- */  
+ */
 <ClassTest /> +
-    function constructor()
-    {
-        <TrivialInitialization />;
-    };
+  function constructor() {
+    <TrivialInitialization />;
+  };
 
 function TrivialInitialization() {
-    console.log("in trivial init");
+  console.log("in trivial init");
 }
 ```
 
@@ -97,13 +97,12 @@ export class ClassTest {
   constructor() {
     console.log("in trivial init");
   }
-
 }
 ```
 
 ### DSL
 
-Take [draft-dsl-match](https://github.com/mistlog/draft-dsl-match/tree/develop) as an example, we can get limited pattern match support from it.
+Take [draft-dsl-match](https://github.com/mistlog/draft-dsl-match/tree/develop) as an example, we can get full support of pattern match from it.
 
 ```shell
 > git clone https://github.com/mistlog/dsl-match-demo.git
@@ -112,36 +111,75 @@ Take [draft-dsl-match](https://github.com/mistlog/draft-dsl-match/tree/develop) 
 > npm run build
 ```
 
-In this demo project, we have code in `src/demo.tsx`:
+> This project can also be used as template project for typedraft.
 
-```ts title="src/demo.tsx"
-export function Main(value: any) {
-    {
-        "use match";
+In this demo project, we have code in `src/vector.tsx`:
 
-        (value: 1) => <HandleValueIsNumber />;
-        (value: "a" | "b" | "c") => console.log("value is ...");
-        () => console.log("default here");
-    }
-}
+```ts title="src/vector.tsx"
+import { MatchDSL } from "draft-dsl-match";
 
-function HandleValueIsNumber() {
-    console.log("value is 1");
-}
+type Vector1 = { x: number };
+type Vector2 = { x: number; y: number };
+type Vector3 = {
+  x: number;
+  y: number;
+  z: number;
+};
+type Vector = Vector1 | Vector2 | Vector3;
+
+const vector: Vector = { x: 1 };
+const result = Λ<string>("match")` ${vector as Vector} 
+  ${{ x: 1, y: 1, z: 1 }} -> ${"vector3"}
+  ${{ x: 2, y: 1 }} -> ${"vector2"}
+  ${{ x: 1 }} -> ${"vector1"}`;
+
+console.log(result);
 ```
 
 transcribe it and get:
 
-```ts title="src/demo.ts"
-export function Main(value: any) {
-  if (value === 1) {
-    console.log("value is 1");
-  } else if (value === "a" || value === "b" || value === "c") {
-    console.log("value is ...");
-  } else {
-    console.log("default here");
-  }
-}
+```ts title="src/vector.ts"
+import { MatchDSL } from "draft-dsl-match";
+type Vector1 = {
+  x: number;
+};
+type Vector2 = {
+  x: number;
+  y: number;
+};
+type Vector3 = {
+  x: number;
+  y: number;
+  z: number;
+};
+type Vector = Vector1 | Vector2 | Vector3;
+const vector: Vector = {
+  x: 1,
+};
+const result = MatchDSL<Vector, string>(vector)
+  .with(
+    {
+      x: 1,
+      y: 1,
+      z: 1,
+    },
+    () => "vector3"
+  )
+  .with(
+    {
+      x: 2,
+      y: 1,
+    },
+    () => "vector2"
+  )
+  .with(
+    {
+      x: 1,
+    },
+    () => "vector1"
+  )
+  .run();
+console.log(result);
 ```
 
-That's the basics of typedraft, for more examples of what’s possible in TypeDraft, see the Handbook section of the website.
+That's the basics of typedraft, for more examples of what’s possible in TypeDraft, see the Handbook in this site.

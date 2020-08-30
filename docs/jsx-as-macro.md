@@ -11,7 +11,7 @@ As showed in [typedraft-in-5min](./typedraft-in-5min.md), if we declare a functi
 ```ts title="demo.tsx"
 export function Main() {
   console.log("hello from main");
-  <ContextA/>;
+  <ContextA />;
 }
 
 function ContextA() {
@@ -24,12 +24,12 @@ Beyond that, it supports nesting:
 ```ts title="demo.tsx"
 export function Main() {
   console.log("hello from main");
-  <ContextA/>;
+  <ContextA />;
 }
 
 function ContextA() {
   console.log("hello from context A");
-  <ContextA2/>;
+  <ContextA2 />;
 }
 
 function ContextA2() {
@@ -57,14 +57,14 @@ In situations such as:
 
 ```ts title="demo.tsx"
 function Main() {
-    for (let i = 0; i < 10; ++i) {
-        //@ts-ignore
-        <Iteration />;
-    }
+  for (let i = 0; i < 10; ++i) {
+    //@ts-ignore
+    <Iteration />;
+  }
 }
 
 function Iteration(i: number) {
-    console.log(i);
+  console.log(i);
 }
 ```
 
@@ -84,22 +84,21 @@ As any arguments will be ignored, we can add "this" argument when macro is used 
 
 ```ts title="demo.tsx"
 export class ClassTest {
-    m_Data: Array<number>;
+  m_Data: Array<number>;
 }
 
 <ClassTest /> +
-    function constructor(this: ClassTest)
-    {
-        this.m_Data = [1,2,3];
-    };
-    
+  function constructor(this: ClassTest) {
+    this.m_Data = [1, 2, 3];
+    <Log />;
+  };
 
 function Log(this: ClassTest) {
-    console.log(`data: ${this.m_Data}`);
+  console.log(`data: ${this.m_Data}`);
 }
 ```
 
-The result will be: 
+The result will be:
 
 ```ts title="demo.ts"
 export class ClassTest {
@@ -109,6 +108,5 @@ export class ClassTest {
     this.m_Data = [1, 2, 3];
     console.log(`data: ${this.m_Data}`);
   }
-
 }
 ```
