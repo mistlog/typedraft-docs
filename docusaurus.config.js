@@ -23,6 +23,11 @@ module.exports = {
           label: 'Docs',
           position: 'left',
         },
+        {
+          to: 'https://mistlog.github.io/typedraft-playground/',
+          label: 'Playground',
+          position: 'left',
+        },
         // { to: 'blog', label: 'Blog', position: 'left' },
         {
           href: 'https://github.com/mistlog/typedraft',
