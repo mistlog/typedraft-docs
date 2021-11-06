@@ -15,7 +15,7 @@ TypeDraft transcribes to readable TypeScript, and you can try it out at the [pla
 You can install it globally:
 
 ```shell
-> npm i -g typedraft
+> npm i -g typedraft@0.2.5
 ```
 
 ## Build your first TypeDraft file
