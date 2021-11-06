@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[18],{156:function(n,t,e){"use strict";e.r(t),e.d(t,"default",(function(){return a}));var o=e(0),c=e.n(o),r=e(178);function a(){return c.a.createElement(r.a,{to:"/typedraft-docs/docs"})}}}]);
